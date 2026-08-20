@@ -1,22 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050A07;
+  --foreground: #ECFDF5;
+
+  --primary: #376E4B;
+
+  --tertiary: #060D08;
+  
+  --auth-secondary: #12281A;
+  --auth-background: #0A120D;
+  --auth-button: #4ADE80;
+  --auth-border: #16291C;
+  --switcher-border: #285638;
+
+  --error-text: #FCA5A5;
+  --error-bg: #1D1010;
+  --error-border: #5A2828;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  
+  --color-auth-secondary: var(--auth-secondary);
+  --color-auth-background: var(--auth-background);
+  --color-auth-border: var(--auth-border);
+  --color-auth-button: var(--auth-button);
+  --color-switcher-border: var(--switcher-border);
+  
+  --color-error-text: var(--error-text);
+  --color-error-bg: var(--error-bg);
+  --color-error-border: var(--error-border);
+
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 * {

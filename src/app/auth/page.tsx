@@ -313,9 +313,9 @@ export default function AuthPage() {
   return (
     <div
       ref={cardRef}
-      className="auth-card relative overflow-hidden rounded-[28px] border border-[#1A3021] bg-[#0A120D]"
+      className="auth-card relative overflow-hidden rounded-[28px] border border-auth-border bg-auth-background"
     >
-      <div className="border-b border-[#14271B] px-6 pt-6 sm:px-8 sm:pt-8">
+      <div className="border-b border-auth-border px-6 py-4 sm:px-8 sm:pt-8">
         <ModeSwitcher
           mode={mode}
           onChange={changeMode}
@@ -324,13 +324,12 @@ export default function AuthPage() {
 
       <div className="auth-content px-6 pb-6 pt-6 sm:px-8 sm:pb-8">
         <div>
-          <h2 className="text-xl font-semibold text-[#ECFDF5]">
+          <h2 className="text-xl font-semibold text-foreground">
             {mode === "login"
               ? "Welcome back."
               : "Create your account."}
           </h2>
-
-          <p className="mt-2 text-sm text-[#587163]">
+          <p className="mt-2 text-sm text-foreground/60">
             {mode === "login"
               ? "Enter your credentials to continue."
               : "Start your journey with us today."}
@@ -341,6 +340,11 @@ export default function AuthPage() {
           onSubmit={handleSubmit}
           className="mt-7 space-y-4"
         >
+          {error && (
+              <div className="rounded-xl border border-error-border bg-error-bg px-3 py-2.5 text-xs text-error-text">
+                {error}
+              </div>
+            )}
           {mode === "register" && (
             <AuthInput
               icon={<User />}
@@ -462,42 +466,26 @@ export default function AuthPage() {
                   }
                   className={`flex h-4 w-4 items-center justify-center rounded border ${
                     rememberMe
-                      ? "border-[#22C55E] bg-[#22C55E]"
-                      : "border-[#294735] bg-transparent"
+                      ? "border-auth-secondary bg-switcher-border"
+                      : "border-auth-border bg-transparent"
                   }`}
                 >
                   {rememberMe && (
-                    <Check className="h-3 w-3 text-[#041008]" />
+                    <Check className="h-3 w-3 text-auth-button" />
                   )}
                 </button>
 
-                <span className="text-xs text-[#5B7465]">
+                <span className="text-xs text-foreground/60">
                   Remember me
                 </span>
               </label>
 
               <button
                 type="button"
-                className="text-xs text-[#4ADE80] hover:text-[#86EFAC]"
+                className="text-xs text-auth-button hover:text-auth-button/80"
               >
                 Forgot password?
               </button>
-            </div>
-          )}
-
-          {/* ERROR */}
-
-          {error && (
-            <div className="rounded-xl border border-[#5A2828] bg-[#1D1010] px-3 py-2.5 text-xs text-[#FCA5A5]">
-              {error}
-            </div>
-          )}
-
-          {/* SUCCESS */}
-
-          {success && (
-            <div className="rounded-xl border border-[#245D39] bg-[#0E2115] px-3 py-2.5 text-xs text-[#86EFAC]">
-              {success}
             </div>
           )}
 
@@ -531,7 +519,7 @@ export default function AuthPage() {
           Continue with Google
         </button>
 
-        <p className="mt-6 text-center text-[10px] text-[#405748]">
+        <p className="mt-6 text-center text-[10px] text-foreground/80">
           Secure authentication · Your data stays yours
         </p>
       </div>
@@ -592,7 +580,7 @@ function AuthInput({
 
   return (
     <div>
-      <label className="mb-2 block text-[10px] font-medium uppercase tracking-[0.14em] text-[#587163]">
+      <label className="mb-2 block text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/60">
         {label}
       </label>
 
@@ -675,8 +663,19 @@ function Captcha({
             <span className="text-xs text-[#526C5D]">
               Loading captcha...
             </span>
+          ) : captcha?.image ? (
+            <Image
+              src={captcha.image}
+              alt="captcha-image"
+              width={180}
+              height={44}
+              className="h-full w-auto object-contain"
+              unoptimized
+            />
           ) : (
-            <Image src={captcha?.image || ""} alt="captcha-image" height={11} />
+            <span className="text-xs text-[#526C5D] italic">
+              Captcha Error
+            </span>
           )}
         </div>
 

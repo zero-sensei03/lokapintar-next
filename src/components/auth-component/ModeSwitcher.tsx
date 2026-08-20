@@ -8,9 +8,9 @@ export function ModeSwitcher({
   onChange: (mode: AuthMode) => void;
 }) {
   return (
-    <div className="relative grid grid-cols-2 rounded-xl border border-[#16291C] bg-[#060D08] p-1">
+    <div className="relative grid grid-cols-2 rounded-xl border border-auth-border bg-tertiary p-1">
       <div
-        className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-lg border border-[#285638] bg-[#12281A] transition-[left] duration-300 ease-out ${
+        className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-lg border border-switcher-border bg-auth-secondary transition-[left] duration-300 ease-out ${
           mode === "login"
             ? "left-1"
             : "left-[calc(50%+2px)]"
@@ -22,8 +22,8 @@ export function ModeSwitcher({
         onClick={() => onChange("login")}
         className={`relative z-10 py-2.5 text-xs font-medium ${
           mode === "login"
-            ? "text-[#D1FAE5]"
-            : "text-[#536D5E]"
+            ? "text-green-600"
+            : "text-gray-300"
         }`}
       >
         Sign in
@@ -34,8 +34,8 @@ export function ModeSwitcher({
         onClick={() => onChange("register")}
         className={`relative z-10 py-2.5 text-xs font-medium ${
           mode === "register"
-            ? "text-[#D1FAE5]"
-            : "text-[#536D5E]"
+            ? "text-green-600"
+            : "text-gray-300"
         }`}
       >
         Create account

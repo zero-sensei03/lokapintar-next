@@ -397,7 +397,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
     <main
       ref={pageRef}
       onClick={handleBackgroundClick}
-      className="auth-page relative min-h-screen overflow-hidden bg-[#050A07] text-[#ECFDF5]"
+      className="auth-page relative min-h-screen overflow-hidden bg-background text-foreground"
     >
       <GalaxyBackground
         galaxyRef={galaxyRef}
@@ -434,11 +434,11 @@ export function AuthLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-2xl font-semibold tracking-tight text-[#ECFDF5]">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 {process.env.NEXT_PUBLIC_APP_NAME}
               </h1>
 
-              <p className="text-sm text-[#5F7768]">
+              <p className="text-sm text-foreground/60">
                 A quiet place for your digital world.
               </p>
             </div>
@@ -447,8 +447,8 @@ export function AuthLayout({ children }: { children: ReactNode }) {
           
           {children}
 
-          <p className="mt-6 text-center text-[10px] text-[#344B3C]">
-            © 2026 {(new Date().getFullYear()) === 2026 ? "" : `- ${new Date().getFullYear()}`} Your Brand. All rights reserved.
+          <p className="mt-6 text-center text-[10px] text-foreground/60">
+            © 2026 {(new Date().getFullYear()) === 2026 ? "" : `- ${new Date().getFullYear()}`} {process.env.NEXT_PUBLIC_APP_NAME}. All rights reserved.
           </p>
         </div>
       </div>

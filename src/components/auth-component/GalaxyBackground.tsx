@@ -40,7 +40,7 @@ export function GalaxyBackground({
     >
       {/* Deep space */}
 
-      <div className="absolute inset-0 bg-[#050A07]" />
+      <div className="absolute inset-0 bg-background" />
 
       {/* =====================================================
           DISTANT GALAXY
