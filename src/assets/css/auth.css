@@ -1,0 +1,125 @@
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   SELECTION
+============================================================ */
+
+::selection {
+  background: #166534;
+  color: #ecfdf5;
+}
+
+/* ============================================================
+   SCROLLBAR
+============================================================ */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050a07;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1d3325;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d6b42;
+}
+
+/* ============================================================
+   GALAXY
+============================================================ */
+
+.galaxy-star {
+  will-change: transform, opacity;
+}
+
+.bright-star {
+  will-change: transform, opacity;
+}
+
+.orbit-object {
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.orbit-traveler {
+  position: relative;
+}
+
+.orbit-traveler::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 1px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #4f785c
+  );
+  opacity: 0.25;
+}
+
+.orbit-planet {
+  will-change: transform, opacity;
+}
+
+/* ============================================================
+   GALAXY GRAIN
+============================================================ */
+
+.galaxy-grain {
+  pointer-events: none;
+}
+
+/* ============================================================
+   AUTH CARD
+============================================================ */
+
+.auth-card {
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 640px) {
+  .auth-page {
+    min-height: 100svh;
+  }
+}
