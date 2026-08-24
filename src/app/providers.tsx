@@ -4,6 +4,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 
 import { useState } from "react";
 
@@ -28,8 +29,11 @@ export default function Providers({
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <HeroUIProvider>
+      <ToastProvider />
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    </HeroUIProvider>
   );
 }

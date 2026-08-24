@@ -7,5 +7,6 @@ export interface BaseResponse<T> {
 export interface ErrorBaseResponse {
     success: boolean;
     message: string;
+    error: unknown;
     errors: unknown;
 }

@@ -1,16 +1,22 @@
+import { SignUpRequest } from "@/interfaces/auth.interface";
 import { BaseResponse, ErrorBaseResponse } from "@/interfaces/base.interface";
-import { CaptchaResponse } from "@/interfaces/captcha.interface";
 import { useMutation } from "@tanstack/react-query"
 import { AxiosError } from "axios";
-import { captchaGenerate } from "./http";
+import { requestSignUpOtp, signUp, verifySignUpOtp } from "./http";
 
-export const useCaptchaGenerate = () => {
-    // const queryClient = useQueryClient();
-    return useMutation<BaseResponse<CaptchaResponse>, AxiosError<ErrorBaseResponse>, null>({
-        mutationFn: () => captchaGenerate(),
-        onError: (error) => {
-            throw error;
-        },
+export const useSignUp = () => {
+    return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, SignUpRequest>({
+        mutationFn: (payload) => signUp(payload)
+    })
+}
+export const useRequestSignUp = () => {
+    return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, { email: string }>({
+        mutationFn: (payload) => requestSignUpOtp(payload)
+    })
+}
+export const useVeiryfySignUp = () => {
+    return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, { email: string; otp: string; }>({
+        mutationFn: (payload) => verifySignUpOtp(payload)
     })
 }
 

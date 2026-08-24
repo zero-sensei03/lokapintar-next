@@ -1,125 +1,159 @@
-button,
-input {
-  font: inherit;
+/* Animated Gradient Background */
+@keyframes meshRotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
 }
 
-button {
-  cursor: pointer;
+@keyframes floatOrb {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(30px, -50px);
+  }
+  66% {
+    transform: translate(-20px, 40px);
+  }
 }
 
-button:disabled {
-  cursor: not-allowed;
-}
-
-/* ============================================================
-   SELECTION
-============================================================ */
-
-::selection {
-  background: #166534;
-  color: #ecfdf5;
-}
-
-/* ============================================================
-   SCROLLBAR
-============================================================ */
-
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: #050a07;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1d3325;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2d6b42;
-}
-
-/* ============================================================
-   GALAXY
-============================================================ */
-
-.galaxy-star {
-  will-change: transform, opacity;
-}
-
-.bright-star {
-  will-change: transform, opacity;
-}
-
-.orbit-object {
-  transform-origin: center center;
-  will-change: transform;
-}
-
-.orbit-traveler {
-  position: relative;
-}
-
-.orbit-traveler::after {
-  content: "";
+.auth-bg-container {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22px;
-  height: 1px;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #4f785c
-  );
-  opacity: 0.25;
+  inset: 0;
+  overflow: hidden;
+  background-color: #FFF9F6;
+  z-index: 0;
 }
 
-.orbit-planet {
-  will-change: transform, opacity;
+/* Base Mesh Blur Layer */
+.mesh-gradient {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 94, 58, 0.25) 0%, transparent 40%),
+              radial-gradient(circle at 80% 30%, rgba(255, 159, 67, 0.25) 0%, transparent 40%),
+              radial-gradient(circle at 50% 80%, rgba(255, 209, 102, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 10% 80%, rgba(255, 110, 150, 0.2) 0%, transparent 45%);
+  filter: blur(60px);
+  animation: meshRotate 25s infinite linear;
 }
 
-/* ============================================================
-   GALAXY GRAIN
-============================================================ */
-
-.galaxy-grain {
+/* Floating Decorative Orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.7;
   pointer-events: none;
 }
 
-/* ============================================================
-   AUTH CARD
-============================================================ */
-
-.auth-card {
-  box-shadow:
-    0 25px 80px rgba(0, 0, 0, 0.35);
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #FF5E3A, #FF9F43);
+  top: 10%;
+  left: 15%;
+  animation: floatOrb 12s infinite ease-in-out;
 }
 
-/* ============================================================
-   REDUCED MOTION
-============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+.orb-2 {
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #FF9F43, #FFD166);
+  bottom: 10%;
+  right: 10%;
+  animation: floatOrb 16s infinite ease-in-out reverse;
 }
 
-/* ============================================================
-   MOBILE
-============================================================ */
+/* Mouse Interactive Spotlight (TypeScript Controlled) */
+.cursor-spotlight {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 159, 67, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease-out;
+  filter: blur(20px);
+}
 
-@media (max-width: 640px) {
-  .auth-page {
-    min-height: 100svh;
-  }
+/* 3D Flip Card Container */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.flip-card-inner {
+  transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Stickman Running Animation */
+@keyframes stickmanRun {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(38px); }
+  100% { transform: translateX(38px); }
+}
+
+/* Bounce Back / Repelled Animation on Error */
+@keyframes stickmanBounce {
+  0% { transform: translateX(38px); }
+  25% { transform: translateX(10px) rotate(-15deg); }
+  50% { transform: translateX(-15px) rotate(-30deg); }
+  75% { transform: translateX(5px) rotate(-10deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+/* Door Opening Animation */
+@keyframes doorOpen {
+  0% { transform: perspective(400px) rotateY(0deg); }
+  100% { transform: perspective(400px) rotateY(-85deg); }
+}
+
+/* Register Rocket Launch Animation */
+@keyframes rocketLaunch {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(-80px) scale(0.5); opacity: 0; }
+}
+
+.animate-stickman-run {
+  animation: stickmanRun 0.8s ease-in-out forwards;
+}
+
+.animate-stickman-bounce {
+  animation: stickmanBounce 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+.animate-door-open {
+  transform-origin: left;
+  animation: doorOpen 0.5s ease-out forwards;
+}
+
+.animate-rocket {
+  animation: rocketLaunch 0.8s ease-in forwards;
 }

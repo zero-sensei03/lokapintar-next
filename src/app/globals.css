@@ -1,18 +1,18 @@
 @import "tailwindcss";
+@plugin './hero.ts';
+/* Note: You may need to change the path to fit your project structure */
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #050A07;
-  --foreground: #ECFDF5;
+  --background: #FFF9F6; /* (Ultra Soft Cream Light) */
+  --foreground: #2D2120;
+  --muted: #7A6664;
+  --border: #F3E2DC;
 
-  --primary: #376E4B;
-
-  --tertiary: #060D08;
-  
-  --auth-secondary: #12281A;
-  --auth-background: #0A120D;
-  --auth-button: #4ADE80;
-  --auth-border: #16291C;
-  --switcher-border: #285638;
+  --primary: #FF5E3A; /* (Vibrant Coral / Merah-Orange Utama) */
+  --secondary: #FF9F43; /* (Warm Amber / Orange Cerah) */
+  --tertiary: #FFD166; /* (Pastel Sun / Kuning Soft Accent) */
 
   --error-text: #FCA5A5;
   --error-bg: #1D1010;
@@ -22,16 +22,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  
   --color-primary: var(--primary);
-
   --color-secondary: var(--secondary);
   --color-tertiary: var(--tertiary);
-  
-  --color-auth-secondary: var(--auth-secondary);
-  --color-auth-background: var(--auth-background);
-  --color-auth-border: var(--auth-border);
-  --color-auth-button: var(--auth-button);
-  --color-switcher-border: var(--switcher-border);
   
   --color-error-text: var(--error-text);
   --color-error-bg: var(--error-bg);
@@ -53,7 +49,22 @@ body {
 }
 
 body {
-  background: #050a07;
-  color: #ecfdf5;
   overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050a07;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1d3325;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d6b42;
 }

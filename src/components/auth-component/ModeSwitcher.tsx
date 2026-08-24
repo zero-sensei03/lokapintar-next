@@ -8,7 +8,7 @@ export function ModeSwitcher({
   onChange: (mode: AuthMode) => void;
 }) {
   return (
-    <div className="relative grid grid-cols-2 rounded-xl border border-auth-border bg-tertiary p-1">
+    <div className="relative grid grid-cols-2 rounded-xl border border-secondary bg-secondary/60 p-1">
       <div
         className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-lg border border-switcher-border bg-auth-secondary transition-[left] duration-300 ease-out ${
           mode === "login"
