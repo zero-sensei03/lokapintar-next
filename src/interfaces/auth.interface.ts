@@ -8,3 +8,16 @@ export interface SignUpRequest {
     captchaToken: string;
     captchaAnswer: string;
 }
+export interface SignInRequest {
+    email: string;
+    password: string;
+    captchaToken: string;
+    captchaAnswer: string;
+}
+
+export interface SignInResponse {
+    user: {
+        name: string;
+        role: string;
+    }
+}

@@ -1,9 +1,14 @@
-import { SignUpRequest } from "@/interfaces/auth.interface";
+import { SignInRequest, SignInResponse, SignUpRequest } from "@/interfaces/auth.interface";
 import { BaseResponse, ErrorBaseResponse } from "@/interfaces/base.interface";
 import { useMutation } from "@tanstack/react-query"
 import { AxiosError } from "axios";
-import { requestSignUpOtp, signUp, verifySignUpOtp } from "./http";
+import { requestSignUpOtp, signIn, signUp, verifySignUpOtp } from "./http";
 
+export const useSignIn = () => {
+    return useMutation<BaseResponse<SignInResponse>, AxiosError<ErrorBaseResponse>, SignInRequest>({
+        mutationFn: (payload) => signIn(payload)
+    })
+}
 export const useSignUp = () => {
     return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, SignUpRequest>({
         mutationFn: (payload) => signUp(payload)

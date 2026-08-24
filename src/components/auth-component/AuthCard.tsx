@@ -7,7 +7,7 @@ import { FormErrors, validateLogin, validateRegister } from "@/validations/auth.
 import { useCaptchaGenerate } from "@/services/captcha";
 import Image from "next/image";
 import { CheckCircle2, Clock3, Eye, EyeClosed, RefreshCw, ShieldCheck } from "lucide-react";
-import { useRequestSignUp, useSignUp, useVeiryfySignUp } from "@/services/auth";
+import { useRequestSignUp, useSignIn, useSignUp, useVeiryfySignUp } from "@/services/auth";
 import { AxiosError } from "axios";
 import { ErrorBaseResponse } from "@/interfaces/base.interface";
 
@@ -59,20 +59,14 @@ export function AuthCard() {
   // Animasi States
   const [loginStatus, setLoginStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
   const [registerStatus, setRegisterStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Form States
   const [authEmail, setAuthEmail] = useState("");
+
   const [loginData, setLoginData] = useState<LoginProps>(INITIAL_LOGIN_FORM);
   const [registerData, setRegisterData] = useState<RegisterProps>(INITIAL_REGISTER_FORM);
 
   const [errors, setErrors] = useState<FormErrors>({});
-
-  // Trigger Toast Notification
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   // OnBlur Validation Handlers
   const handleLoginBlur = (field: keyof typeof loginData) => {
@@ -121,48 +115,37 @@ export function AuthCard() {
     fetchCaptcha();
   }, [fetchCaptcha]);
 
-  // Flip Toggle
-  const handleToggleFlip = () => {
-    setErrors({});
-    setLoginStatus("idle");
-    setRegisterStatus("idle");
-    setIsFlipped(!isFlipped);
+  const initialState = (flipped: boolean, dataFor: "register" | "login" | "both" = "both", hideError: boolean = true) => {
+    if(!hideError) {
+      setErrors({});
+    }
     setShowPassword(false);
     setShowConfirmPassword(false);
-    fetchCaptcha();
-  };
-
-  // Submit Handlers
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const validationErrors = validateLogin(loginData);
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
-      // Trigger stickman hit door and bounce back
-      setLoginStatus("loading");
-      setTimeout(() => {
-        setLoginStatus("error");
-        setTimeout(() => setLoginStatus("idle"), 800);
-      }, 600);
-      return;
+    if(dataFor === "both") {
+      setIsFlipped(flipped);
+      fetchCaptcha()
+      setAuthEmail("");
     }
+    if(dataFor === "both" || dataFor === "login") {
+      setLoginData(INITIAL_LOGIN_FORM);
+      setLoginStatus("idle");
+    }
+    if(dataFor === "both" || dataFor === "register") {
+      setRegisterData(INITIAL_REGISTER_FORM);
+      setRegisterStatus("idle");
+    }
+  }
 
-    // Login Success Animation Sequence
-    setLoginStatus("loading");
-    setTimeout(() => {
-      showToast("🎉 Congratulations! Welcome back!");
-      setTimeout(() => {
-        setLoginStatus("idle");
-        // router.push("/dashboard");
-      }, 1500);
-    }, 1000);
+  // Flip Toggle
+  const handleToggleFlip = () => {
+    if(loginStatus !== "loading" && registerStatus !== "loading") {
+      initialState(!isFlipped, "both", false)
+    }
   };
 
 
   // register -> otp
-  const { isOpen: isOpenRegisterOtp, onOpenChange: onOpenChangeRegisterOtp, onOpen: onOpenRegisterOtp } = useDisclosure();
-  const [otpRegisterLoading, setOtpRegisterLoading] = useState(false);
+  const { isOpen: isOpenRegisterOtp, onOpenChange: onOpenChangeRegisterOtp, onOpen: onOpenRegisterOtp, onClose: onCloseRegisterOtp } = useDisclosure();
   const { mutateAsync: mutateSignUp } = useSignUp();
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,23 +169,21 @@ export function AuthCard() {
       captchaToken: captcha?.token || "",
       captchaAnswer: registerData.captchaAnswer
     }, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         addToast({
           title: "🚀 Account created successfully!",
           description: data.message,
           color: "success"
         })
-        setAuthEmail(registerData.email)
-        fetchCaptcha();
-        setTimeout(() => {
-          setRegisterData(INITIAL_REGISTER_FORM)
-          onOpenRegisterOtp()
-          setRegisterStatus("idle");
-        }, 500);
+        await setAuthEmail(registerData.email)
+        initialState(true, "register")
+        onOpenRegisterOtp();
       },
       onError: (error: AxiosError<ErrorBaseResponse>) => {
+        setRegisterData((prev) => ({ ...prev, captchaAnswer: "" }));
         setRegisterStatus("idle");
-        fetchCaptcha();
+        fetchCaptcha()
+        setAuthEmail("");
         addToast({
           description: error.response?.data?.message || error.message || "Failed to sign up",
           color: "danger"
@@ -213,13 +194,14 @@ export function AuthCard() {
           if (Array.isArray(errorField)) {
             const errorsData: FormErrors = {};
 
-            errorField.forEach(
-              ({ field, message }: { field: keyof FormErrors; message: string }) => {
-                errorsData[field] = errorsData[field]
-                  ? `${errorsData[field]}\n${message}`
-                  : message;
-              },
-            );
+            for (const { field, message } of errorField as {
+              field: keyof FormErrors;
+              message: string;
+            }[]) {
+              if (errorsData[field] === undefined) {
+                errorsData[field] = message;
+              }
+            }
 
             setErrors(errorsData);
           }
@@ -227,10 +209,12 @@ export function AuthCard() {
       }
     })
   };
+
+  // otp auth
+  const [otpAuthLoading, setOtpAuthLoading] = useState(false);
   const { mutateAsync: mutateRequestSignUp } = useRequestSignUp();
-  const resendOtp = async () => {
-    
-    setOtpRegisterLoading(true);
+  const resendOtp = async () => {   
+    setOtpAuthLoading(true);
     await mutateRequestSignUp({ email: authEmail }, {
       onSuccess: (data) => {
         addToast({
@@ -238,13 +222,13 @@ export function AuthCard() {
           color: "success"
         })
         setTimeout(() => {
-          setOtpRegisterLoading(false);
+          setOtpAuthLoading(false);
         }, 500);
       },
       onError: (error: AxiosError<ErrorBaseResponse>) => {
-        setOtpRegisterLoading(false);
+        setOtpAuthLoading(false);
         addToast({
-          description: error.response?.data?.message || error.message || "Failed to sign up",
+          description: error.response?.data?.message || error.message || "Failed to resend new otp",
           color: "danger"
         })
       }
@@ -252,40 +236,124 @@ export function AuthCard() {
   };
   const { mutateAsync: mutateVerifySignUp } = useVeiryfySignUp();
   const verifyRegisterOtp = async (otp: string) => {
-    
-    setOtpRegisterLoading(true);
+    setOtpAuthLoading(true);
     await mutateVerifySignUp({ email: authEmail, otp }, {
       onSuccess: (data) => {
         addToast({
-          title: "Congratulation",
+          title: "🎉 Congratulation",
           description: data.message,
           color: "success"
         })
-        setIsFlipped(!isFlipped)
-        setErrors({})
-        setTimeout(() => {
-          setOtpRegisterLoading(false);
-          setAuthEmail("");
-          onOpenChangeRegisterOtp();
-        }, 500);
+        initialState(false, "both", false)
+        setOtpAuthLoading(false);
+        onCloseRegisterOtp();
+        onCloseLoginOtp();
       },
       onError: (error: AxiosError<ErrorBaseResponse>) => {
-        setOtpRegisterLoading(false);
+        setOtpAuthLoading(false);
         addToast({
-          description: error.response?.data?.message || error.message || "Failed to sign up",
+          description: error.response?.data?.message || error.message || "Failed to verify your otp",
           color: "danger"
         })
       }
     })
   };
 
+  // login Handlers
+  const { isOpen: isOpenLoginOtp, onOpenChange: onOpenChangeLoginOtp, onOpen: onOpenLoginOtp, onClose: onCloseLoginOtp } = useDisclosure();
+  const { mutateAsync: mutateSignIn } = useSignIn();
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationErrors = validateLogin(loginData);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      addToast({
+        description: "Validation failed, Please check your form again",
+        color: "danger"
+      })
+      return false;
+    }
+
+    setLoginStatus("loading");
+    await mutateSignIn({
+      email: loginData.email,
+      password: loginData.password,
+      captchaToken: captcha?.token || "",
+      captchaAnswer: loginData.captchaAnswer
+    }, {
+      onSuccess: (data) => {
+        addToast({
+          title: "Congratulations!",
+          description: data.message,
+          color: "success"
+        })
+        setLoginStatus("success");
+        // setTimeout(() => setLoginStatus("idle"), 800);
+        initialState(true, "both", false)
+        // router.push("/dashboard")
+      },
+      onError: (error: AxiosError<ErrorBaseResponse>) => {
+        setLoginData((prev) => ({ ...prev, captchaAnswer: "" }));
+        fetchCaptcha()
+        if(error.status === 409) {
+          setAuthEmail(loginData.email);
+          addToast({
+            description: error.response?.data?.message || error.message || "Failed to sign up",
+            color: "warning"
+          })
+          setTimeout(() => onOpenLoginOtp(), 500);
+        } else {
+          addToast({
+            description: error.response?.data?.message || error.message || "Failed to sign up",
+            color: "danger"
+          })
+        }
+
+        setLoginStatus("error");
+        setTimeout(() => setLoginStatus("idle"), 800);
+
+        if(error.response?.data?.error) {
+          const errorField = error.response?.data?.error
+          if (Array.isArray(errorField)) {
+            const errorsData: FormErrors = {};
+
+            for (const { field, message } of errorField as {
+              field: keyof FormErrors;
+              message: string;
+            }[]) {
+              if (errorsData[field] === undefined) {
+                errorsData[field] = message;
+              }
+            }
+
+            setErrors(errorsData);
+          }
+        }
+      }
+    })
+  };
+
   return (
     <>
+      {/* register otp card */}
       <OTPCard
         isOpen={isOpenRegisterOtp}
-        onOpenChange={onOpenChangeRegisterOtp}
+        onOpenChange={() => {
+          onOpenChangeRegisterOtp();
+        }}
         resendOtp={resendOtp}
-        isLoading={otpRegisterLoading}
+        isLoading={otpAuthLoading}
+        handleSet={(otp: string) => verifyRegisterOtp(otp)}
+      />
+      {/* login otp card */}
+      <OTPCard
+        isOpen={isOpenLoginOtp}
+        onOpenChange={() => {
+          onOpenChangeLoginOtp();
+        }}
+        resendOtp={resendOtp}
+        isLoading={otpAuthLoading}
         handleSet={(otp: string) => verifyRegisterOtp(otp)}
       />
       <div className="perspective-1000 relative w-full">
@@ -413,6 +481,7 @@ export function AuthCard() {
               {/* Button with Animated Stickman & Door Scene */}
               <Button
                 type="submit"
+                isLoading={loginStatus === "loading"}
                 disabled={loginStatus !== "idle"}
                 className="mt-2 relative h-12 w-full overflow-hidden bg-[#FF5E3A] font-semibold text-white shadow-md hover:bg-[#FF5E3A]/90"
               >
@@ -472,7 +541,7 @@ export function AuthCard() {
 
             <p className="mt-6 text-center text-xs text-[#7A6664]">
               Don&apos;t have an account?{" "}
-              <button onClick={handleToggleFlip} className="font-semibold text-[#FF5E3A] hover:underline">
+              <button onClick={handleToggleFlip} className="font-semibold text-[#FF5E3A] hover:underline cursor-pointer">
                 Sign Up
               </button>
             </p>
@@ -633,6 +702,7 @@ export function AuthCard() {
               {/* Register Button with Rocket Launch Animation */}
               <Button
                 type="submit"
+                isLoading={registerStatus === "loading"}
                 isDisabled={registerStatus !== "idle"}
                 className="mt-1 relative h-11 w-full overflow-hidden bg-[#FF5E3A] font-semibold text-white shadow-md hover:bg-[#FF5E3A]/90"
               >
@@ -674,7 +744,7 @@ export const OTPCard = ({
 }: {
   isOpen: boolean;
   onOpenChange: () => void;
-  handleSet: (otp: string) => void;
+  handleSet: (otp: string) => Promise<void>;
   resendOtp: () => void;
   isLoading: boolean;
 }) => {
@@ -715,10 +785,10 @@ export const OTPCard = ({
     onOpenChange();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (otp.length !== 6 || isLoading) return;
-
-    handleSet(otp);
+    await handleSet(otp);
+    setOtp("")
   };
 
   const handleResend = () => {
@@ -788,14 +858,6 @@ export const OTPCard = ({
                 radius="lg"
                 isDisabled={isLoading}
               />
-
-              <div className="flex items-center gap-2 text-xs text-default-400">
-                <Clock3 size={14} />
-
-                <span>
-                  Your OTP is valid for a few minutes.
-                </span>
-              </div>
             </div>
           </ModalBody>
 
