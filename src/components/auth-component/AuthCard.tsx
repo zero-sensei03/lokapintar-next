@@ -5,11 +5,12 @@ import { Input, Button, Divider, addToast, Spinner, cn, Modal, ModalContent, Mod
 import { useRouter } from "next/navigation";
 import { FormErrors, validateLogin, validateRegister } from "@/validations/auth.validation";
 import { useCaptchaGenerate } from "@/services/captcha";
-import Image from "next/image";
-import { CheckCircle2, Clock3, Eye, EyeClosed, RefreshCw, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Eye, EyeClosed, RefreshCw, ShieldCheck } from "lucide-react";
 import { useRequestSignUp, useSignIn, useSignUp, useVeiryfySignUp } from "@/services/auth";
 import { AxiosError } from "axios";
 import { ErrorBaseResponse } from "@/interfaces/base.interface";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 interface CaptchaData {
   token: string;
@@ -142,6 +143,20 @@ export function AuthCard() {
       initialState(!isFlipped, "both", false)
     }
   };
+
+  const { setAuth, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    initialState(false, "both", false)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if(isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router])
 
 
   // register -> otp
@@ -288,10 +303,13 @@ export function AuthCard() {
           description: data.message,
           color: "success"
         })
+        setAuth({
+          user: data.data.user,
+          permissions: []
+        })
         setLoginStatus("success");
-        // setTimeout(() => setLoginStatus("idle"), 800);
-        initialState(true, "both", false)
-        // router.push("/dashboard")
+        setTimeout(() => setLoginStatus("idle"), 800);
+        router.push("/dashboard")
       },
       onError: (error: AxiosError<ErrorBaseResponse>) => {
         setLoginData((prev) => ({ ...prev, captchaAnswer: "" }));
@@ -407,6 +425,9 @@ export function AuthCard() {
                 }}
               />
 
+              <div className="flex items-center justify-end">
+                <Link href={"/auth/forgot-password"} className="md:text-sm text-xs text-primary hover:underline duration-300">Forgot password ?</Link>
+              </div>
               {/* Captcha Field */}
               <div className={cn("rounded-xl border border-[#F3E2DC] p-3", { "border-danger": errors.captchaAnswer })}>
                 <div className="mb-2 flex items-center justify-between">
@@ -488,7 +509,7 @@ export function AuthCard() {
                 {loginStatus === "idle" && "Sign In"}
 
                 {loginStatus !== "idle" && (
-                  <div className="flex items-center justify-center gap-6 h-full w-full">
+                  <div className="flex items-center justify-end gap-6 h-full w-full">
                     {/* Stickman Graphic */}
                     <div
                       className={`transition-all duration-300 ${

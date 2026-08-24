@@ -15,9 +15,27 @@ export interface SignInRequest {
     captchaAnswer: string;
 }
 
+export interface AuthUser {
+  name: string;
+  role: string | string[];
+}
+
 export interface SignInResponse {
-    user: {
-        name: string;
-        role: string;
-    }
+    user: AuthUser
+}
+
+export interface AuthState {
+  user: AuthUser | null;
+  permissions: string[];
+  isAuthenticated: boolean;
+
+  setUser: (user: AuthUser) => void;
+  setPermissions: (permissions: string[]) => void;
+
+  setAuth: (data: {
+    user: AuthUser;
+    permissions: string[];
+  }) => void;
+
+  clearAuth: () => void;
 }
