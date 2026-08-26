@@ -2,16 +2,21 @@
 
 import { create } from "zustand";
 import {
+  getAuthPermissionsCookie,
+  getAuthUserCookie,
   removeAuthCookies,
   setAuthPermissionsCookie,
   setAuthUserCookie,
 } from "@/lib/auth-cookie";
 import type { AuthState } from "@/interfaces/auth.interface";
 
+const initialUser = getAuthUserCookie();
+const initialPermissions = getAuthPermissionsCookie();
+
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  permissions: [],
-  isAuthenticated: false,
+  user: initialUser,
+  permissions: initialPermissions,
+  isAuthenticated: initialUser !== null,
 
   setUser: (user) => {
     setAuthUserCookie(user);
