@@ -415,7 +415,7 @@ export function AuthCard() {
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                 type={showPassword ? "text" : "password"}
                 endContent={
-                  <Button onPress={() => setShowPassword(!showPassword)} isIconOnly size="sm" className="bg-transparent text-primary">
+                  <Button type="button" onPress={() => setShowPassword(!showPassword)} isIconOnly size="sm" className="bg-transparent text-primary">
                     {showPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
                   </Button>
                 }
@@ -616,7 +616,7 @@ export function AuthCard() {
                 value={registerData.password}
                 type={showPassword ? "text" : "password"}
                 endContent={
-                  <Button onPress={() => setShowPassword(!showPassword)} isIconOnly size="sm" className="bg-transparent text-primary">
+                  <Button type="button" onPress={() => setShowPassword(!showPassword)} isIconOnly size="sm" className="bg-transparent text-primary">
                     {showPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
                   </Button>
                 }
@@ -639,7 +639,7 @@ export function AuthCard() {
                 }
                 type={showConfirmPassword ? "text" : "password"}
                 endContent={
-                  <Button onPress={() => setShowConfirmPassword(!showConfirmPassword)} isIconOnly size="sm" className="bg-transparent text-primary">
+                  <Button type="button" onPress={() => setShowConfirmPassword(!showConfirmPassword)} isIconOnly size="sm" className="bg-transparent text-primary">
                     {showConfirmPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
                   </Button>
                 }

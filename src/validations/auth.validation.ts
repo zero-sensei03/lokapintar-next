@@ -4,6 +4,7 @@ export interface FormErrors {
   password?: string;
   passwordVerification?: string;
   captchaAnswer?: string;
+  otp?: string;
 }
 
 export const validateLogin = (data: {
@@ -53,3 +54,44 @@ export const validateRegister = (data: {
 
   return errors;
 };
+
+export const validateForgot = (data: {
+  email?: string;
+}): FormErrors => {
+  const errors: FormErrors = {};
+
+  if (!data.email) {
+    errors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.email = "Invalid email format";
+  }
+
+  return errors;
+};
+export const validateReset = (data: {
+  otp?: string;
+  email?: string;
+  password?: string;
+  passwordVerification?: string;
+}): FormErrors => {
+  const errors = validateForgot(data);
+
+  if (!data.otp) {
+    errors.name = "OTP Token is required";
+  }
+
+  if (!data.password) {
+    errors.password = "Password is required";
+  } else if (data.password.length < 6) {
+    errors.password = "Password must be at least 6 characters";
+  }
+  
+  if (!data.passwordVerification) {
+    errors.passwordVerification = "Please confirm your password";
+  } else if (data.password !== data.passwordVerification) {
+    errors.passwordVerification = "Passwords do not match";
+  }
+
+  return errors;
+};
+

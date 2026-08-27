@@ -1,8 +1,8 @@
-import { SignInRequest, SignInResponse, SignUpRequest } from "@/interfaces/auth.interface";
+import { ResetRequest, SignInRequest, SignInResponse, SignUpRequest } from "@/interfaces/auth.interface";
 import { BaseResponse, ErrorBaseResponse } from "@/interfaces/base.interface";
 import { useMutation } from "@tanstack/react-query"
 import { AxiosError } from "axios";
-import { requestSignUpOtp, signIn, signUp, verifySignUpOtp } from "./http";
+import { forgotPassword, requestSignUpOtp, resetPassword, signIn, signUp, verifyForgotOtp, verifySignUpOtp } from "./http";
 
 export const useSignIn = () => {
     return useMutation<BaseResponse<SignInResponse>, AxiosError<ErrorBaseResponse>, SignInRequest>({
@@ -22,6 +22,21 @@ export const useRequestSignUp = () => {
 export const useVeiryfySignUp = () => {
     return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, { email: string; otp: string; }>({
         mutationFn: (payload) => verifySignUpOtp(payload)
+    })
+}
+export const useForgotPassword = () => {
+    return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, { email: string }>({
+        mutationFn: (payload) => forgotPassword(payload)
+    })
+}
+export const useVeiryfyForgot = () => {
+    return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, { email: string; otp: string; }>({
+        mutationFn: (payload) => verifyForgotOtp(payload)
+    })
+}
+export const useResetPassword = () => {
+    return useMutation<BaseResponse<{ data: boolean }>, AxiosError<ErrorBaseResponse>, ResetRequest>({
+        mutationFn: (payload) => resetPassword(payload)
     })
 }
 

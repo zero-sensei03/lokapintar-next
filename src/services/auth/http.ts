@@ -2,7 +2,7 @@ import { refreshApi } from "@/lib/api/refresh";
 import api from "@/lib/api/axios"
 
 import { BaseResponse } from "@/interfaces/base.interface";
-import { SignInRequest, SignInResponse, SignUpRequest } from "@/interfaces/auth.interface";
+import { ResetRequest, SignInRequest, SignInResponse, SignUpRequest } from "@/interfaces/auth.interface";
 
 export const refreshToken = async () => {
     const response = await refreshApi.post("/auth/refresh");
@@ -26,5 +26,20 @@ export const requestSignUpOtp = async (payload: { email: string }): Promise<Base
 
 export const verifySignUpOtp = async (payload: { email: string; otp: string; }): Promise<BaseResponse<{data: boolean}>> => {
     const response = await api.post("/auth/sign-up/otp/verify", payload);
+    return response.data;
+}
+
+export const forgotPassword = async (payload: { email: string }): Promise<BaseResponse<{data: boolean}>> => {
+    const response = await api.post("/auth/forgot-password", payload);
+    return response.data;
+}
+
+export const verifyForgotOtp = async (payload: { email: string; otp: string; }): Promise<BaseResponse<{data: boolean}>> => {
+    const response = await api.post("/auth/forgot-password/verify", payload);
+    return response.data;
+}
+
+export const resetPassword = async (payload: ResetRequest): Promise<BaseResponse<{data: boolean}>> => {
+    const response = await api.post("/auth/forgot-password/reset", payload);
     return response.data;
 }
