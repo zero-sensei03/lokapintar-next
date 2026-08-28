@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
 @import "tailwindcss";
 @plugin './hero.ts';
 /* Note: You may need to change the path to fit your project structure */
@@ -6,6 +8,7 @@
 
 :root {
   --background: #FFF9F6; /* (Ultra Soft Cream Light) */
+  --panel-background: #fefcf9;
   --foreground: #2D2120;
   --muted: #7A6664;
   --border: #F3E2DC;
@@ -21,6 +24,7 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-panel-background: var(--panel-background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
@@ -50,6 +54,7 @@ body {
 
 body {
   overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 ::-webkit-scrollbar {
